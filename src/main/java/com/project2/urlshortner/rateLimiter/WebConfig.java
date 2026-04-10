@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptor)
-                .excludePathPatterns("/health", "/internal/**");
+         registry.addInterceptor(interceptor)
+            .addPathPatterns("/**"); 
     }
 }
