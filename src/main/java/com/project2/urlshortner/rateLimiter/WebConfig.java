@@ -12,7 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-         registry.addInterceptor(interceptor)
-            .addPathPatterns("/**").excludePathPatterns("/error"); 
+        registry.addInterceptor(interceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/error");
     }
 }
