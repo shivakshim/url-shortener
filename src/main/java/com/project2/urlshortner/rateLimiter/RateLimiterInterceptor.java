@@ -16,6 +16,10 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
     @Autowired
     private RateLimiterClient rateLimiterClient;
 
+     public RateLimiterInterceptor() {
+        System.out.println("🔥 INTERCEPTOR BEAN CREATED");
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
