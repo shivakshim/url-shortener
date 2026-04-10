@@ -14,6 +14,10 @@ spring:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
 
+  rate:
+    limiter:
+      url: ${RATE_LIMITER_URL}
+
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
 
