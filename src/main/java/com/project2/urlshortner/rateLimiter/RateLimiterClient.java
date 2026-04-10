@@ -11,7 +11,7 @@ public class RateLimiterClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${rate.limiter.url}")
+    @Value("${spring.rate.limiter.url}")
     private String baseUrl;
 
     public boolean isAllowed(String clientId, String endpoint) {
