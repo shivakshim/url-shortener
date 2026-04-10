@@ -7,13 +7,15 @@ import org.springframework.web.servlet.config.annotation.*;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private RateLimiterInterceptor interceptor;
+    private final RateLimiterInterceptor interceptor;
+
+    public WebConfig(RateLimiterInterceptor interceptor) {
+        this.interceptor = interceptor;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(interceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/error");
+                .addPathPatterns("/**"); // VERY IMPORTANT
     }
 }
