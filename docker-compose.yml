@@ -69,7 +69,7 @@ services:
 
     environment:
       APP_BASE_URL: ${APP_BASE_URL}
-      RATE_LIMITER_URL: http://13.48.85.189:8080
+      RATE_LIMITER_URL: ${RATE_LIMITER_URL}
 
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/urlshortener
       SPRING_DATASOURCE_USERNAME: user
