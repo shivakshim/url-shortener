@@ -10,6 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final RateLimiterInterceptor interceptor;
 
     public WebConfig(RateLimiterInterceptor interceptor) {
+        System.out.println("✅ WebConfig LOADED");
         this.interceptor = interceptor;
     }
 
