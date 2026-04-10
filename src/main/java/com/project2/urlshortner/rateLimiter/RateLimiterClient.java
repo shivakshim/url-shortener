@@ -6,38 +6,48 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.*;
 import org.springframework.web.client.*;
 
-    @Component
-    public class RateLimiterClient {
+@Component
+public class RateLimiterClient {
 
-        private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
-        @Value("${rate.limiter.url}")
-        private String baseUrl;
+    @Value("${rate.limiter.url}")
+    private String baseUrl;
 
-        public boolean isAllowed(String clientId, String endpoint) {
-            try {
-                String url = baseUrl + "/check/tokenbucketlua";
+    public boolean isAllowed(String clientId, String endpoint) {
+        try {
+            System.out.println("📡 RL BASE URL: " + baseUrl);
 
-                MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-                body.add("clientId", clientId);
-                body.add("endpoint", endpoint);
+            String url = baseUrl + "/check/tokenbucketlua";
 
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            System.out.println("📡 Calling RL at: " + url);
+            System.out.println("➡️ clientId: " + clientId + ", endpoint: " + endpoint);
 
-                HttpEntity<MultiValueMap<String, String>> request =
-                        new HttpEntity<>(body, headers);
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("clientId", clientId);
+            body.add("endpoint", endpoint);
 
-                ResponseEntity<String> response =
-                        restTemplate.postForEntity(url, request, String.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-                return response.getStatusCode().is2xxSuccessful();
+            HttpEntity<MultiValueMap<String, String>> request =
+                    new HttpEntity<>(body, headers);
 
-            } catch (HttpClientErrorException.TooManyRequests e) {
-                return false;
-            } catch (Exception e) {
-                return true; // fail-safe
-            }
+            ResponseEntity<String> response =
+                    restTemplate.postForEntity(url, request, String.class);
+
+            System.out.println("✅ RL Response Status: " + response.getStatusCode());
+
+            return response.getStatusCode().is2xxSuccessful();
+
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            System.out.println("❌ RL BLOCKED (429)");
+            return false;
+
+        } catch (Exception e) {
+            System.out.println("⚠️ RL ERROR: " + e.getMessage());
+            return true; // fail-safe
         }
     }
+}
 
