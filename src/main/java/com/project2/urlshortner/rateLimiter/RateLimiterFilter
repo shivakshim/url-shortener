@@ -1,0 +1,54 @@
+package com.project2.urlshortner.rateLimiter;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+@Component
+public class RateLimiterFilter implements Filter {
+
+    @Autowired
+    private RateLimiterClient rateLimiterClient;
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
+
+        System.out.println("🔥 FILTER HIT: " + req.getRequestURI());
+
+        String clientId = req.getHeader("X-Forwarded-For");
+        if (clientId == null || clientId.isEmpty()) {
+            clientId = req.getRemoteAddr();
+        }
+
+        String endpoint = "/redirect";
+
+        System.out.println("➡️ Checking RL for client: " + clientId);
+
+        boolean allowed = rateLimiterClient.isAllowed(clientId, endpoint);
+
+        if (!allowed) {
+            System.out.println("🚫 BLOCKING REQUEST");
+
+            res.setStatus(429);
+            res.getWriter().write("Too Many Requests");
+            return;
+        }
+
+        System.out.println("✅ REQUEST ALLOWED");
+
+        chain.doFilter(request, response);
+    }
+}
